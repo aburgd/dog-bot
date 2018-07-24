@@ -19,13 +19,13 @@
     "@babel/preset-flow": "^7.0.0-beta.54",
     "babel-eslint": "^8.2.6",
     "flow-bin": "^0.76.0",
+    "nodemon": "^1.18.3",
     "standard": "^11.0.1"
   },
   "scripts": {
     "test": "standard --fix",
     "babel-node": "babel-node",
     "build": "babel src/ -d lib",
-    "prestart": "yarn run build",
     "start": "nodemon --exec yarn babel-node -- lib/bot.js"
   },
   "standard": {
