@@ -21,8 +21,8 @@ client.on('ready', () => {
 
 client.on('message', (message: Message) => {
   if (!message.content.startsWith(prefix)) return null
-  if (message.content === `${prefix}`) dog(message)
-  if (message.content === `${prefix}s`) dogs(message)
+  if (message.content.toLowerCase() === `${prefix}`) dog(message)
+  if (message.content.toLowerCase() === `${prefix}s`) dogs(message)
 })
 
 // $FlowIgnore
