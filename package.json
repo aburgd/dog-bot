@@ -1,0 +1,37 @@
+{
+  "name": "dog",
+  "version": "1.0.0",
+  "description": "dog bot",
+  "main": "index.js",
+  "author": "Alec Burgdorf <aeburgd@gmail.com>",
+  "license": "MIT",
+  "private": false,
+  "dependencies": {
+    "discord.js": "^11.3.2",
+    "isomorphic-fetch": "^2.2.1",
+    "request": "^2.87.0"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.0.0-beta.54",
+    "@babel/core": "^7.0.0-beta.54",
+    "@babel/node": "^7.0.0-beta.54",
+    "@babel/preset-env": "^7.0.0-beta.54",
+    "@babel/preset-flow": "^7.0.0-beta.54",
+    "babel-eslint": "^8.2.6",
+    "flow-bin": "^0.76.0",
+    "standard": "^11.0.1"
+  },
+  "scripts": {
+    "test": "standard --fix",
+    "babel-node": "babel-node",
+    "build": "babel src/ -d lib",
+    "prestart": "yarn run build",
+    "start": "nodemon --exec yarn babel-node -- lib/bot.js"
+  },
+  "standard": {
+    "parser": "babel-eslint",
+    "plugins": [
+      "flowtype"
+    ]
+  }
+}
