@@ -3,7 +3,7 @@ import { Client, GuildChannel, Message, RichEmbed } from 'discord.js'
 import fetch from 'isomorphic-fetch'
 import config from '../config'
 
-const token: string = config.token
+const token = config.token || process.env.BOT_TOKEN
 const prefix: string = config.prefix
 const dogUrl: string = config.dogUrl
 
@@ -25,6 +25,7 @@ client.on('message', (message: Message) => {
   if (message.content === `${prefix}s`) dogs(message)
 })
 
+// $FlowIgnore
 client.login(token)
 
 async function dog (msg: Message): Promise<any> {
