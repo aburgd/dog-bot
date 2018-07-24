@@ -3,7 +3,7 @@ import { Client, GuildChannel, Message, RichEmbed } from 'discord.js'
 import fetch from 'isomorphic-fetch'
 import config from '../config'
 
-const token = config.token || process.env.BOT_TOKEN
+const token = process.env.BOT_TOKEN || config.token
 const prefix: string = config.prefix
 const dogUrl: string = config.dogUrl
 
