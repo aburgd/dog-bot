@@ -1,5 +1,5 @@
 export default {
-  "token": "BOT_TOKEN",
+  "token": "BOT TOKEN",
   "prefix": "dog",
   "dogUrl": "https://dog.ceo/api/breeds/image/random"
 }
