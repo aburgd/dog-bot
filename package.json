@@ -26,7 +26,8 @@
     "test": "standard --fix",
     "babel-node": "babel-node",
     "build": "babel src/ -d lib",
-    "start": "nodemon --exec yarn babel-node -- lib/bot.js"
+    "start": "nodemon --exec yarn babel-node -- lib/bot.js",
+    "deploy": "now --public"
   },
   "standard": {
     "parser": "babel-eslint",
