@@ -1,5 +1,5 @@
 {
   "env": {
-    "BOT_TOKEN": "@dog-bot-api"
+    "BOT_TOKEN": "@dog-bot-token"
   }
 }
