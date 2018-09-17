@@ -1,0 +1,6 @@
+{
+  "token": "BOT_TOKEN",
+  "prefix": "+",
+  "dogUrl": "https://dog.ceo/api/breeds/image/random",
+  "inviteUrl": "https://discordapp.com/oauth2/authorize?client_id=469694811171979266&scope=bot&permissions=19456"
+}
