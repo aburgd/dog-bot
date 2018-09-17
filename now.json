@@ -1,5 +1,14 @@
 {
   "env": {
     "BOT_TOKEN": "@dog-bot-token"
+  },
+  "engines": {
+    "node": "^10.7.0"
+  },
+  "scale": {
+    "sfo1": {
+      "min": 1,
+      "max": 2
+    }
   }
 }
