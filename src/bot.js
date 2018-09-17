@@ -1,58 +1,100 @@
-// @flow
-import { Client, GuildChannel, Message, RichEmbed } from 'discord.js'
-import fetch from 'isomorphic-fetch'
+#! /usr/bin/env node
+
+/* eslint curly: ["error", "multi-line"] */
+import {Client, Collection} from 'discord.js'
 import config from '../config'
+import {dog} from './utils'
 
-const token = process.env.BOT_TOKEN || config.token
-const prefix: string = config.prefix
-const dogUrl: string = config.dogUrl
+/* eslint-disable prefer-destructuring */
+const token = process.env.BOT_TOKEN || config.token || 'BOT TOKEN'
+const prefix = config.prefix || '+'
+const inviteUrl = config.inviteUrl || 'INVITE URL'
+/* eslint-enable prefer-destructuring */
 
-if (token === 'BOT TOKEN') {
-  console.error('ERR - replace "BOT TOKEN" in config.js with your bot config.token')
-  process.exit(1)
+const talkedRecently = new Set()
+const newUsers = []
+
+if (token === null || token.length === 0) {
+  const missingToken = new Error('ERR - replace "BOT TOKEN" in config.js with your bot\'s token')
+  console.error(missingToken)
+  throw missingToken
 }
 
-const client: Client = new Client()
+const client = new Client()
 
 client.on('ready', () => {
   console.log('READY')
   client.user.setActivity('with dogs')
 })
 
-client.on('message', (message: Message) => {
-  if (!message.content.startsWith(prefix)) return null
-  if (message.content.toLowerCase() === `${prefix}`) dog(message)
-  if (message.content.toLowerCase() === `${prefix}s`) dogs(message)
+client.on('guildMemberAdd', member => {
+  const guild = member[guild]
+  if (!newUsers[guild.id]) newUsers[guild.id] = new Collection()
+  newUsers[guild.id].set(member.id, member.user)
+
+  if (newUsers[guild.id].size > 10) {
+    const userList = newUsers[guild.id].map(user => user.toString())
+    guild.channels.find('name', 'general').send('Hewwo!\n' + userList)
+    newUsers[guild.id].clear()
+  }
 })
 
-// $FlowIgnore
+client.on('guildMemberRemove', member => {
+  const guild = member[guild]
+  if (newUsers[guild.id].has(member.id)) newUsers.delete(member.id)
+})
+
+client.on('message', message => {
+  /* eslint-disable prefer-destructuring */
+  const content = message.content
+  /* eslint-enable prefer-destructuring */
+  if (!content.startsWith(prefix)) return null
+
+  if (talkedRecently.has(message.author.id)) return null
+  talkedRecently.add(message.author.id)
+  setTimeout(() => {
+    talkedRecently.delete(message.author.id)
+  }, 2500)
+
+  const args = content.slice(prefix.length).trim().split(/ +/g)
+  // eslint-disable-next-line no-unused-vars
+  const command = args.shift().toLowerCase()
+  switch (command) {
+    case 'dog': {
+      const numDogs = args.length > 0 ? Number(args) : 1
+      if (numDogs > 5) {
+        message.channel.send('Please keep requests for doggos to a max of 5 at a time! Much thank!')
+        console.error('ERR - Max Dogs')
+      } else {
+        dog(message, numDogs)
+      }
+      break
+    }
+    case 'off': {
+      if (Number(message.author.id) === 191999414817128449) {
+        message.channel.send('Powering off!')
+        process.exit(0)
+      } else {
+        message.channel.send('You don\'t have permission for this!')
+      }
+      break
+    }
+    case 'invite': {
+      // eslint-disable-next-line prefer-destructuring
+      const sender = message.author
+      const senderPermissions = message.channel.permissionsFor(sender)
+      if (senderPermissions.has('ADMINISTRATOR', false)) {
+        sender.send(`Invite me using: ${inviteUrl}`)
+        message.reply('Please check your DMs!')
+      } else {
+        message.channel.send('You don\'t have permissions to do that!')
+      }
+      break
+    }
+    default: {
+      break
+    }
+  }
+})
+
 client.login(token)
-
-async function dog (msg: Message): Promise<any> {
-  fetch(dogUrl)
-    .then((data: Response) => data.json())
-    .then((json: any) => json.message)
-    .then((url: string) => buildEmbed(url))
-    .then((embed: RichEmbed) => msg.channel.send({ embed }))
-}
-
-async function dogs (msg: Message): Promise<any> {
-  fetch(`${dogUrl}/3`)
-    .then((data: Response) => data.json())
-    .then((json: any) => json.message)
-    .then((message: Array<string>) => {
-      message.forEach((url: string) => {
-        msg.channel.send(buildEmbed(url))
-      })
-    })
-    .catch((exc) => {
-      msg.reply('Sorry, couldn\'t quite get that')
-      console.error(exc)
-    })
-}
-
-const buildEmbed = (url: string): RichEmbed => new RichEmbed({ image: { url } })
-
-// function buildEmbed (url: string): RichEmbed {
-//   return new RichEmbed({ image: { url } })
-// }
