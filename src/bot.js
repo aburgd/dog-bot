@@ -9,6 +9,7 @@ import {dog} from './utils'
 const token = process.env.BOT_TOKEN || config.token || 'BOT TOKEN'
 const prefix = config.prefix || '+'
 const inviteUrl = config.inviteUrl || 'INVITE URL'
+const ownerId = config.ownerId || 000000000000000000
 /* eslint-enable prefer-destructuring */
 
 const talkedRecently = new Set()
@@ -71,7 +72,7 @@ client.on('message', message => {
       break
     }
     case 'off': {
-      if (Number(message.author.id) === 191999414817128449) {
+      if (Number(message.author.id) === ownerId) {
         message.channel.send('Powering off!')
         process.exit(0)
       } else {
