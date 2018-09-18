@@ -3,13 +3,12 @@
 /* eslint curly: ["error", "multi-line"] */
 import {Client, Collection} from 'discord.js'
 import config from '../config'
-import {dog} from './utils'
+import onMessage from './handler'
+import {randomInt} from './utils'
 
 /* eslint-disable prefer-destructuring */
 const token = process.env.BOT_TOKEN || config.token || 'BOT TOKEN'
 const prefix = config.prefix || '+'
-const inviteUrl = config.inviteUrl || 'INVITE URL'
-const ownerId = config.ownerId || 000000000000000000
 /* eslint-enable prefer-destructuring */
 
 const talkedRecently = new Set()
@@ -25,14 +24,22 @@ const client = new Client()
 
 client.on('ready', () => {
   console.log('READY')
-  client.user.setActivity('with dogs')
+  const activities = ['with dogs', 'isomorphic-fetch', 'snekfetch']
+  const random = randomInt(0, activities.length)
+  const activity = activities[random]
+  client.user.setActivity(activity)
 })
 
 client.on('guildMemberAdd', member => {
+  // Get the guild of the new member
   const guild = member[guild]
+  // Create a new Collection for each guild
   if (!newUsers[guild.id]) newUsers[guild.id] = new Collection()
+  // Add the new Member to the guild's newUsers
   newUsers[guild.id].set(member.id, member.user)
 
+  // After 10 new members, greet them and
+  // clear the guild's new members Collection
   if (newUsers[guild.id].size > 10) {
     const userList = newUsers[guild.id].map(user => user.toString())
     guild.channels.find('name', 'general').send('Hewwo!\n' + userList)
@@ -46,9 +53,8 @@ client.on('guildMemberRemove', member => {
 })
 
 client.on('message', message => {
-  /* eslint-disable prefer-destructuring */
+  // eslint-disable-next-line prefer-destructuring
   const content = message.content
-  /* eslint-enable prefer-destructuring */
   if (!content.startsWith(prefix)) return null
 
   if (talkedRecently.has(message.author.id)) return null
@@ -57,45 +63,7 @@ client.on('message', message => {
     talkedRecently.delete(message.author.id)
   }, 2500)
 
-  const args = content.slice(prefix.length).trim().split(/ +/g)
-  // eslint-disable-next-line no-unused-vars
-  const command = args.shift().toLowerCase()
-  switch (command) {
-    case 'dog': {
-      const numDogs = args.length > 0 ? Number(args) : 1
-      if (numDogs > 5) {
-        message.channel.send('Please keep requests for doggos to a max of 5 at a time! Much thank!')
-        console.error('ERR - Max Dogs')
-      } else {
-        dog(message, numDogs)
-      }
-      break
-    }
-    case 'off': {
-      if (Number(message.author.id) === ownerId) {
-        message.channel.send('Powering off!')
-        process.exit(0)
-      } else {
-        message.channel.send('You don\'t have permission for this!')
-      }
-      break
-    }
-    case 'invite': {
-      // eslint-disable-next-line prefer-destructuring
-      const sender = message.author
-      const senderPermissions = message.channel.permissionsFor(sender)
-      if (senderPermissions.has('ADMINISTRATOR', false)) {
-        sender.send(`Invite me using: ${inviteUrl}`)
-        message.reply('Please check your DMs!')
-      } else {
-        message.channel.send('You don\'t have permissions to do that!')
-      }
-      break
-    }
-    default: {
-      break
-    }
-  }
+  onMessage(message)
 })
 
 client.login(token)
