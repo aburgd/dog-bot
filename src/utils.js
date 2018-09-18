@@ -1,7 +1,7 @@
 // Utils for bot.js
 import {RichEmbed} from 'discord.js'
 import fetch from 'isomorphic-fetch'
-import {dogUrl} from '../config.json'
+import {dogUrl} from '../config'
 
 const splitUrls = urlString => urlString.split(/,+/g)
 const buildEmbed = url => new RichEmbed({image: {url}})
@@ -30,3 +30,9 @@ export async function dog(msg, num) {
     })
 }
 /* eslint-enable require-await */
+
+export function randomInt(min, max) {
+  min = Math.ceil(min)
+  max = Math.floor(max)
+  return Math.floor(Math.random() * (max - min)) + min
+}
