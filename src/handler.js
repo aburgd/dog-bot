@@ -1,7 +1,11 @@
+import {Collection} from 'discord.js'
 import {prefix, ownerId, inviteUrl} from '../config'
+import {client} from './bot'
 import {dog} from './utils'
 
-export default function onMessage(message) {
+const newUsers = []
+
+export function onMessage(message) {
   const args = message.content.slice(prefix.length).trim().split(/ +/g)
 
   const command = args.shift().toLowerCase()
@@ -32,6 +36,8 @@ export default function onMessage(message) {
         message.reply(`Are you sure? Reply \`${prefix}offy\` to confirm!`)
       } else {
         message.channel.send('You don\'t have permission for this!')
+        const owner = client.users.get(ownerId)
+        owner.send(`Someone tried to shut me down: ${message.author.id}`)
       }
       break
     }
@@ -55,4 +61,26 @@ export default function onMessage(message) {
       break
     }
   }
+}
+
+export function onGuildMemberAdd(member) {
+  // Get the guild of the new member
+  const guild = member[guild]
+  // Create a new Collection for each guild
+  if (!newUsers[guild.id]) newUsers[guild.id] = new Collection()
+  // Add the new Member to the guild's newUsers
+  newUsers[guild.id].set(member.id, member.user)
+
+  // After 10 new members, greet them and
+  // clear the guild's new members Collection
+  if (newUsers[guild.id].size > 10) {
+    const userList = newUsers[guild.id].map(user => user.toString())
+    guild.channels.find('name', 'general').send('Hewwo!\n' + userList)
+    newUsers[guild.id].clear()
+  }
+}
+
+export function onGuildMemberRemove(member) {
+  const guild = member[guild]
+  if (newUsers[guild.id].has(member.id)) newUsers.delete(member.id)
 }
