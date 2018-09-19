@@ -1,11 +1,11 @@
 import {Collection} from 'discord.js'
 import {prefix, ownerId, inviteUrl} from '../config'
-import {client} from './bot'
 import {dog} from './utils'
 
 const newUsers = []
 
-export function onMessage(message) {
+export function onMessage(message, client) {
+  const owner = client.users.get(ownerId)
   const args = message.content.slice(prefix.length).trim().split(/ +/g)
 
   const command = args.shift().toLowerCase()
@@ -27,6 +27,7 @@ export function onMessage(message) {
         process.exit(0)
       } else {
         message.reply('You\'re not my dad!')
+        owner.send(`Someone tried to shut me down: ${message.author.id}`)
       }
       break
     }
@@ -36,7 +37,6 @@ export function onMessage(message) {
         message.reply(`Are you sure? Reply \`${prefix}offy\` to confirm!`)
       } else {
         message.channel.send('You don\'t have permission for this!')
-        const owner = client.users.get(ownerId)
         owner.send(`Someone tried to shut me down: ${message.author.id}`)
       }
       break

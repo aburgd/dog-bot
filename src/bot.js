@@ -18,7 +18,7 @@ if (token === null || token.length === 0) {
   throw missingToken
 }
 
-export const client = new Client()
+const client = new Client()
 
 client.on('ready', () => {
   console.log('READY')
@@ -29,7 +29,7 @@ client.on('ready', () => {
 })
 
 client.on('guildMemberAdd', member => {
-  onGuildMemberAdd(member)
+  onGuildMemberAdd(member, client)
 })
 
 client.on('guildMemberRemove', member => {
