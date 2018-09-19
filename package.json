@@ -29,6 +29,8 @@
   "xo": {
     "semicolon": false,
     "space": true,
-    "curly": ["error", "multi"]
+    "rules": {
+      "curly": ["error", "multi-line"]
+    }
   }
 }

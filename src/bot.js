@@ -1,6 +1,6 @@
 #! /usr/bin/env node
 
-/* eslint curly: ["error", "multi-line"] */
+import {Client} from 'discord.js'
 import {Client, Collection} from 'discord.js'
 import config from '../config'
 import onMessage from './handler'
