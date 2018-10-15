@@ -30,7 +30,10 @@
     "semicolon": false,
     "space": true,
     "rules": {
-      "curly": ["error", "multi-line"]
+      "curly": [
+        "error",
+        "multi-line"
+      ]
     }
   }
 }

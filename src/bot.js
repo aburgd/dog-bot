@@ -1,18 +1,17 @@
 #! /usr/bin/env node
-
 import {Client} from 'discord.js'
 import config from '../config'
 import {onMessage, onGuildMemberAdd, onGuildMemberRemove} from './handler'
 import {randomInt} from './utils'
 
 /* eslint-disable prefer-destructuring */
-const token = process.env.BOT_TOKEN || config.token || 'BOT TOKEN'
+const token = process.env.BOT_TOKEN || config.token || 'BOT_TOKEN'
 const prefix = config.prefix || '+'
 /* eslint-enable prefer-destructuring */
 
 const talkedRecently = new Set()
 
-if (token === null || token.length === 0) {
+if (token === null || token.length === 0 || token === 'BOT_TOKEN') {
   const missingToken = new Error('ERR - replace "BOT TOKEN" in config.js with your bot\'s token')
   console.error(missingToken)
   throw missingToken
@@ -47,7 +46,7 @@ client.on('message', message => {
     talkedRecently.delete(message.author.id)
   }, 2500)
 
-  onMessage(message)
+  onMessage(message, client)
 })
 
 client.login(token)
